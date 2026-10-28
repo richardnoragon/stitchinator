@@ -19,4 +19,4 @@
 
 ### Documentation and provenance
 
-The initial Git commit imports the existing implementation, including the `0.1.0-alpha.20` baseline and later unreleased work. No earlier Git commits, approved releases or artifact provenance are invented. Historical increment notes are retained under [docs/history](docs/history/README.md). Future entries should link to the actual commits/pull requests that implement them.
+The [initial source import](https://github.com/richardnoragon/stitchinator/commit/3c6490b8a928b62e8624991f64eb35e82528b0aa) imports the existing implementation, including the `0.1.0-alpha.20` baseline and later unreleased work. No earlier Git commits, approved releases or artifact provenance are invented. Historical increment notes are retained under [docs/history](docs/history/README.md). Future entries should link to the actual commits/pull requests that implement them.
