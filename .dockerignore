@@ -1,0 +1,14 @@
+target
+node_modules
+data
+backups
+dist
+.git
+.aws
+.codex
+.agents
+.env*
+*.tar
+*.tar.gz
+test-results
+playwright-report

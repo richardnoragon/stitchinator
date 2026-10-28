@@ -1,0 +1,146 @@
+[
+  {
+    "id": "starter-sc",
+    "name": "Single crochet rows",
+    "description": "A six-stitch, four-row practice sample of a compact crochet fabric.",
+    "instructions": "US terms. Begin with 7 chains. Row 1: starting in the second chain from the hook, work 1 single crochet into each remaining chain (6 stitches). Rows 2–4: chain 1, turn; work 1 single crochet under both top loops of each stitch (6 stitches). The turning chain is not counted and is not drawn in the chart. Fasten off after row 4, or repeat the last row for a longer sample.",
+    "cols": 6,
+    "rows": 4,
+    "cells": [
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc"
+    ],
+    "stitches": [
+      {
+        "id": "sc",
+        "termKey": "sc",
+        "name": "Single crochet",
+        "abbr": "sc",
+        "symbol": "×",
+        "consumed": 1,
+        "produced": 1
+      }
+    ]
+  },
+  {
+    "id": "starter-hdc",
+    "name": "Half double crochet rows",
+    "description": "A six-stitch, four-row sample using half double crochet; turning chains are uncounted.",
+    "instructions": "US terms. Chain 8. Row 1: work 1 half double crochet in the third chain from the hook and each chain after it (6 stitches). For rows 2–4, chain 2 and turn, then work 1 half double crochet in every stitch, beginning in the first stitch (6 stitches). Do not count or work into the turning chains; they are outside the chart. To make a half double crochet: yarn over, insert the hook, pull up a loop, then yarn over and pull through all three loops.",
+    "cols": 6,
+    "rows": 4,
+    "cells": [
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc",
+      "hdc"
+    ],
+    "stitches": [
+      {
+        "id": "hdc",
+        "termKey": "hdc",
+        "name": "Half double crochet",
+        "abbr": "hdc",
+        "symbol": "T",
+        "consumed": 1,
+        "produced": 1
+      }
+    ]
+  },
+  {
+    "id": "starter-rib",
+    "name": "Single crochet back-loop rib",
+    "description": "A small ribbing study: a plain foundation row followed by rows worked into back loops.",
+    "instructions": "US terms. Chain 7; starting in the second chain, make 6 single crochet stitches. For each following row, chain 1, turn, and work 1 single crochet into the back loop only of every stitch (6 stitches). The back loop is the loop farther from you after turning. Make three back-loop rows for this chart; repeat that row as desired. The turning chain is not counted and is omitted from the diagram. Compare the texture with the plain single crochet sample.",
+    "cols": 6,
+    "rows": 4,
+    "cells": [
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "sc",
+      "scblo",
+      "scblo",
+      "scblo",
+      "scblo",
+      "scblo",
+      "scblo",
+      "scblo",
+      "scblo",
+      "scblo",
+      "scblo",
+      "scblo",
+      "scblo",
+      "scblo",
+      "scblo",
+      "scblo",
+      "scblo",
+      "scblo",
+      "scblo"
+    ],
+    "stitches": [
+      {
+        "id": "sc",
+        "termKey": "sc",
+        "name": "Single crochet",
+        "abbr": "sc",
+        "symbol": "×",
+        "consumed": 1,
+        "produced": 1
+      },
+      {
+        "id": "scblo",
+        "termKey": "scblo",
+        "name": "Single crochet in back loop only",
+        "abbr": "scBLO",
+        "symbol": "×⌒",
+        "consumed": 1,
+        "produced": 1
+      }
+    ]
+  }
+]

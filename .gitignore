@@ -1,0 +1,21 @@
+/target/
+/node_modules/
+/data/
+/backups/
+/dist/
+/test-results/
+/playwright-report/
+/.env*
+!/.env.example
+/.aws/
+/.codex/
+/.agents/
+/.idea/
+/.vscode/
+/Project Documents Templates/
+/*.tar
+/*.tar.gz
+/*.log
+*.tmp
+.DS_Store
+Thumbs.db

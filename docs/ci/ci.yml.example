@@ -1,0 +1,60 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  quality-and-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install tested Rust toolchain
+        run: |
+          rustup toolchain install 1.98.1 --profile minimal --component rustfmt,clippy
+          rustup default 1.98.1
+      - name: Install OCR and browser dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr tesseract-ocr-eng tesseract-ocr-deu
+          npm ci
+          npx playwright install --with-deps chromium firefox
+      - name: Check repository documents and source hygiene
+        run: python3 scripts/check_repository.py
+      - name: Rust formatting and Clippy
+        run: |
+          cargo fmt --all --check
+          cargo clippy --locked --all-targets -- -D warnings
+      - name: Unit and logic tests
+        run: |
+          cargo test --locked
+          npm run test:logic
+      - name: Build browser-test server
+        run: cargo build --locked
+      - name: Browser workflows
+        run: |
+          npm run test:browser
+          npm run test:browser -- --snapping-only
+          npm run test:browser -- --pictures-only
+          npm run test:browser -- --amigurumi-only
+  docker:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Build local validation image with provenance
+        run: docker build --build-arg VCS_REF="$GITHUB_SHA" --tag stitchinator:ci .
+      - name: Verify packaged OCR tools
+        run: |
+          docker run --rm stitchinator:ci tesseract --list-langs
+          docker run --rm stitchinator:ci pdfinfo -v

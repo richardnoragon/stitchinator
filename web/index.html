@@ -1,0 +1,1048 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stitchinator · Crochet studio</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header>
+      <div>
+        <span class="eyebrow">YOUR OFFLINE CROCHET STUDIO</span>
+        <h1>Stitchinator<span> / prototype</span></h1>
+      </div>
+      <div class="actions">
+        <button id="save">Save now</button
+        ><button id="download">Download project</button
+        ><button id="openFile">Open file</button
+        ><input id="import" type="file" accept=".json" hidden />
+      </div>
+    </header>
+    <div class="notice">
+      Internal prototype · Flat piece shapes and yarn bands. Custom stitches and
+      repeating patterns are available. Estimates use one measured swatch for
+      the entire fabric. Local projects · Configurable automatic backups.
+    </div>
+    <main>
+      <aside>
+        <section>
+          <details id="inventoryPanel">
+            <summary>Personal yarn inventory</summary>
+            <p>
+              Record each dye lot separately. Save yarn changes before restoring
+              a collection backup.
+            </p>
+            <label>Search yarns<input id="inventorySearch" /></label>
+            <p id="inventoryCount"></p>
+            <div id="inventoryList"></div>
+            <details><summary>Offline starter yarn catalog</summary><p>Manufacturer specifications checked October 27, 2026. Verify your ball band; catalog entries do not establish owned stock or measured gauge. Reference links are saved as text for optional later verification.</p><label>Find catalog yarn<input id="catalogSearch" type="search"></label><select id="catalogYarn" aria-label="Catalog yarn"></select><button id="useCatalogYarn" type="button">Use as new lot draft</button></details>
+<button id="newYarn">New yarn lot</button
+            ><button id="reloadInventory">Reload inventory</button
+            ><button id="downloadInventory">Download inventory / draft</button>
+            <form id="yarnForm">
+              <fieldset id="yarnFields">
+                <legend id="inventoryHeading">New yarn lot</legend>
+                <label
+                  >Lot name<input
+                    id="yarn_name"
+                    type="text"
+                    maxlength="200"
+                    required /></label
+                ><label
+                  >Brand<input
+                    id="yarn_brand"
+                    type="text"
+                    maxlength="200" /></label
+                ><label
+                  >Product name<input
+                    id="yarn_product"
+                    type="text"
+                    maxlength="200" /></label
+                ><label
+                  >Fiber composition<input
+                    id="yarn_fiber"
+                    type="text"
+                    maxlength="200" /></label
+                ><label
+                  >Color<input
+                    id="yarn_color"
+                    type="text"
+                    maxlength="200" /></label
+                ><label
+                  >Dye lot<input
+                    id="yarn_dye_lot"
+                    type="text"
+                    maxlength="200" /></label
+                ><label
+                  >Yarn weight/category<input
+                    id="yarn_category"
+                    type="text"
+                    maxlength="200" /></label
+                ><label
+                  >Grams per skein<input
+                    id="yarn_skein_grams"
+                    type="number"
+                    step="any"
+                    min="0"
+                    max="1000000"
+                    required /></label
+                ><label
+                  >Meters per skein<input
+                    id="yarn_skein_meters"
+                    type="number"
+                    step="any"
+                    min="0"
+                    max="1000000"
+                    required /></label
+                ><label
+                  >Remaining grams (including partial skeins)<input
+                    id="yarn_remaining_grams"
+                    type="number"
+                    step="any"
+                    min="0"
+                    max="1000000"
+                    required /></label
+                ><label
+                  >Cost per skein (optional)<input
+                    id="yarn_cost"
+                    type="number"
+                    step="any"
+                    min="0"
+                    max="1000000" /></label
+                ><label
+                  >Currency code, e.g. EUR (required with cost)<input
+                    id="yarn_currency"
+                    type="text"
+                    maxlength="200" /></label
+                ><label
+                  >Yarn shape<select id="yarn_shape">
+                    <option value="round">Round</option>
+                    <option value="flat">Flat</option>
+                  </select></label
+                ><label
+                  ><span id="yarnSizeLabel">Diameter (mm, optional)</span
+                  ><input
+                    id="yarn_size_mm"
+                    type="number"
+                    min="0.001"
+                    max="1000"
+                    step="any" /></label
+                ><label
+                  >Thickness (mm, flat yarn only, optional)<input
+                    id="yarn_thickness_mm"
+                    type="number"
+                    min="0.001"
+                    max="1000"
+                    step="any" /></label
+                ><label
+                  >Notes<textarea
+                    id="yarn_notes"
+                    maxlength="2000"
+                  ></textarea></label
+                ><button type="submit" id="saveYarn">Save yarn lot</button>
+              </fieldset>
+            </form>
+            <p id="inventoryStatus" role="status"></p>
+          </details>
+        </section>
+        <section>
+          <h2>Collection backups</h2>
+          <p id="backupStatus" role="status">Loading backup status…</p>
+          <div class="actions">
+            <button id="backupNow">Back up now</button
+            ><button id="refreshBackups">Refresh status</button>
+          </div>
+          <label
+            >Restore point<select id="restorePoint">
+              <option value="">Choose a restore point</option>
+            </select></label
+          ><button id="restoreBackup">Restore entire collection</button>
+          <p id="backupActionStatus" role="status"></p>
+          <p class="hint">
+            Monthly full backups and daily incrementals; three monthly cycles
+            retained. Restore requires a successful full safety backup.
+            Configure the host folder in Compose; it must remain mounted and
+            writable.
+          </p>
+        </section>
+        <section>
+          <h2>Project library</h2>
+          <label
+            >New project name<input
+              id="newProjectName"
+              maxlength="100"
+              placeholder="A new crochet idea" /></label
+          ><button id="newProject">Create project</button
+          ><label
+            >Search projects<input
+              id="projectSearch"
+              type="search"
+              placeholder="Name, description, or tags" /></label
+          ><label
+            >Folder<select id="projectFilter">
+              <option value="">All folders</option>
+            </select></label
+          ><button id="refreshProjects">Refresh library</button>
+          <p id="projectCount"></p>
+          <div id="projectList"></div>
+          <p id="libraryStatus" role="status"></p>
+        </section>
+        <section>
+          <h2>Project pieces</h2>
+          <label>Active piece<select id="pieceSelect"></select></label>
+          <p id="pieceSummary"></p>
+          <label
+            >New piece name<input
+              id="newPieceName"
+              maxlength="100"
+              placeholder="Bag base or handle" /></label
+          ><button id="addPiece">Add blank piece</button>
+          <div class="pair">
+            <label>Piece name<input id="pieceName" maxlength="100" /></label
+            ><label
+              >Quantity<input
+                id="pieceQuantity"
+                type="number"
+                min="1"
+                max="99"
+                value="1"
+            /></label>
+          </div>
+          <button id="savePiece">Save piece details</button>
+          <p id="pieceStatus" role="status"></p>
+          <button id="estimateProject">Calculate all piece estimates</button
+          ><output id="projectEstimate"
+            >Calculate estimates for all pieces using their own
+            measurements.</output
+          >
+        </section>
+        <section>
+          <h2>Yarn assignment and reservations</h2>
+          <p>
+            Assign one dye lot to the whole piece, or use Yarn bands below for
+            multiple yarns and split-lot allocation.
+          </p>
+          <p id="assignedYarn"></p>
+          <button id="refreshYarns">Refresh yarn list</button>
+          <label
+            >Yarn lot<select id="pieceYarn">
+              <option value="">Refresh yarn list to choose</option>
+            </select></label
+          >
+          <button id="assignYarn">Apply yarn to this piece</button>
+          <p id="reservationState" role="status"></p>
+          <label
+            >Project status<select id="projectLifecycle">
+              <option>Draft</option>
+              <option>Ready to make</option>
+              <option>In progress</option>
+              <option>On hold</option>
+              <option>Completed</option>
+              <option>Abandoned</option>
+            </select></label
+          >
+          <label
+            ><input type="checkbox" id="reconcileReservations" /> Update
+            commitments when moving to In progress or On hold</label
+          >
+          <button id="reviewReservations">Review stock and reservations</button>
+          <button id="applyLifecycle">Review and apply status</button>
+          <p>
+            Ready to make reserves required yarn. On hold keeps commitments.
+            Completed, Abandoned, or Draft releases them. Commitments can exceed
+            stock; shortages remain visible. Reviewing does not change
+            commitments.
+          </p>
+          <output id="reservationReport"></output>
+          <p id="yarnPlanningStatus" role="status"></p>
+        </section>
+        <section>
+          <h2>Yarn bands</h2>
+          <p>
+            Horizontal bands run along the piece’s length and are clipped to its
+            shape. Give each yarn/stitch fabric its own swatch. Length shares
+            must total 100%. This does not model yarns held together or
+            colorwork within the same stitches.
+          </p>
+          <p id="bandCoverage"></p>
+          <div id="bandList"></div>
+          <button id="newBand">New / cancel band draft</button
+          ><button id="singleYarnMode">Return to single-yarn mode</button>
+          <form id="bandForm">
+            <label
+              >Band name<input id="band_name" maxlength="100" required /></label
+            ><label
+              >Stitch pattern description<input
+                id="band_pattern"
+                maxlength="200" /></label
+            ><label
+              >Share of piece length (%)<input
+                id="band_percent"
+                type="number"
+                min="0.001"
+                max="100"
+                step="any"
+                value="100"
+                required /></label
+            ><label
+              >Preview color<input
+                id="band_color"
+                type="color"
+                value="#cb765d" /></label
+            ><label
+              >Swatch width (cm)<input
+                id="band_swatch_width"
+                type="number"
+                min="0.000001"
+                max="1000000"
+                step="any" /></label
+            ><label
+              >Swatch length (cm)<input
+                id="band_swatch_length"
+                type="number"
+                min="0.000001"
+                max="1000000"
+                step="any" /></label
+            ><label
+              >Swatch stitches<input
+                id="band_stitches"
+                type="number"
+                min="0.000001"
+                max="1000000"
+                step="any" /></label
+            ><label
+              >Swatch rows<input
+                id="band_rows"
+                type="number"
+                min="0.000001"
+                max="1000000"
+                step="any" /></label
+            ><label
+              >Swatch fabric grams<input
+                id="band_grams"
+                type="number"
+                min="0.000001"
+                max="1000000"
+                step="any" /></label
+            ><label
+              >Hook size (mm)<input
+                id="band_hook"
+                type="text"
+                maxlength="200" /></label
+            ><label
+              >Swatch state<select id="band_blocking">
+                <option>After blocking</option>
+                <option>Before blocking</option>
+              </select></label
+            ><button id="refreshBandLots" type="button">
+              Refresh band yarn lots</button
+            ><label
+              >Lot<select id="bandLot">
+                <option value="">Refresh yarn lots first</option>
+              </select></label
+            ><label
+              >Lot share of this band’s yarn (%)<input
+                id="bandLotPercent"
+                type="number"
+                min="0.001"
+                max="100"
+                step="any"
+                value="100" /></label
+            ><button id="addBandLot" type="button">
+              Add lot to band draft
+            </button>
+            <div id="bandAllocations"></div>
+            <button id="saveBand" type="submit">Save band</button>
+          </form>
+          <p id="bandStatus" role="status"></p>
+        </section>
+        <section>
+          <h2>Actual yarn consumption</h2>
+          <p>
+            Record grams actually used, independently of the estimate.
+            Corrections keep history. Enter 0 when correcting to remove usage
+            and return its grams to stock.
+          </p>
+          <button id="refreshUsage">Refresh usage</button
+          ><button id="newUsage">New usage entry</button>
+          <form id="usageForm">
+            <label
+              >Yarn lot<select id="usageLot" required>
+                <option value="">Refresh usage to choose a lot</option>
+              </select></label
+            ><label
+              >Grams used (corrected total when editing)<input
+                id="usageGrams"
+                type="number"
+                min="0"
+                max="1000000"
+                step="any"
+                required /></label
+            ><label
+              >Notes / correction reason<textarea
+                id="usageNote"
+                maxlength="2000"
+              ></textarea></label
+            ><button id="saveUsage" type="submit">Review and save usage</button>
+          </form>
+          <p id="usageStatus" role="status"></p>
+          <div id="usageList"></div>
+        </section>
+        <section>
+          <h2>Making progress</h2>
+          <p>
+            Track completed rows or rounds manually, independently of either
+            sample chart. Each copy has its own stopping point.
+          </p>
+          <label>Copy<select id="progressCopy"></select></label>
+          <label
+            >Completed rows / rounds<input
+              id="completedRows"
+              type="number"
+              min="0"
+              max="1000000"
+              step="1"
+              value="0"
+          /></label>
+          <label
+            >Stopping point / notes<textarea
+              id="stoppingNote"
+              maxlength="2000"
+            ></textarea>
+          </label>
+          <p id="progressWarning" role="status"></p>
+          <button id="openWorking" type="button">Open focused working view</button>
+<button id="saveProgress">Save progress</button>
+          <button id="retainProgress" hidden>
+            Retain progress for this design
+          </button>
+          <button id="resetProgress">Reset this copy’s progress</button>
+          <p id="progressStatus" role="status"></p>
+          <p id="inactiveProgress"></p>
+        </section>
+        <section>
+          <h2>Project and active piece</h2>
+          <label
+            >Piece shape<select id="pieceShape">
+              <option value="rectangle">Rectangle</option>
+              <option value="circle">Circle</option>
+              <option value="oval">Oval (ellipse)</option>
+              <option value="triangle">Triangle (centered apex)</option>
+            </select></label
+          ><button id="applyShape" disabled>Apply shape</button
+          ><button id="cancelShape" disabled>Cancel shape preview</button>
+          <p id="shapeInfo"></p>
+          <p id="shapeStatus" role="status"></p>
+          <label>Project name<input id="name" value="My scarf" /></label>
+          <div class="pair">
+            <label
+              ><span id="shapeWidthLabel">Width (cm)</span
+              ><input
+                id="width"
+                type="number"
+                min="0.1"
+                value="20"
+                step="0.1" /></label
+            ><label
+              ><span id="shapeLengthLabel">Length (cm)</span
+              ><input
+                id="length"
+                type="number"
+                min="0.1"
+                value="100"
+                step="0.1"
+            /></label>
+          </div>
+          <button id="applyDimensions" disabled>Apply dimensions</button
+          ><button id="cancelDimensions" disabled>Cancel</button>
+          <p id="dimensionStatus" class="hint" role="status"></p>
+          <details>
+            <summary>Project details</summary>
+            <label
+              >Description<textarea
+                id="projectDescription"
+                maxlength="2000"
+                rows="3"
+              ></textarea></label
+            ><label
+              >Tags, separated by commas<input
+                id="projectTags"
+                maxlength="820" /></label
+            ><label
+              >Folder path<input
+                id="projectFolder"
+                maxlength="240"
+                placeholder="Gifts/Scarves" /></label
+            ><button id="saveMetadata">Save project details</button>
+          </details>
+          <label
+            >Yarn color<input id="color" type="color" value="#cb765d" /></label
+          ><label
+            >Interface size<select id="textSize">
+              <option value="16">Standard</option>
+              <option value="19">Large</option>
+              <option value="22">Extra large</option>
+            </select></label
+          >
+        </section>
+        <section>
+          <h2>Measured swatch</h2>
+          <p class="muted">
+            Enter your own measurements. The swatch must represent the complete
+            stitch pattern and yarn used in this piece.
+          </p>
+          <div class="pair">
+            <label
+              >Width (cm)<input
+                id="swatch_width"
+                type="number"
+                min="0.1"
+                step="0.1" /></label
+            ><label
+              >Length (cm)<input
+                id="swatch_length"
+                type="number"
+                min="0.1"
+                step="0.1" /></label
+            ><label>Stitches<input id="stitches" type="number" min="1" /></label
+            ><label>Rows<input id="rows" type="number" min="1" /></label
+            ><label
+              >Fabric weight (g)<input
+                id="grams"
+                type="number"
+                min="0.01"
+                step="0.01" /></label
+            ><label
+              >Hook / needle (mm)<input id="hook" type="number" min="0.1" step="0.1"
+            /></label>
+          </div>
+          <p class="hint">
+            Weigh only the measured fabric, excluding leftover yarn.
+          </p>
+          <label
+            >Measurement state<select id="blocking">
+              <option>After blocking</option>
+              <option>Before blocking</option>
+            </select></label
+          >
+          <div class="pair">
+            <label
+              >Skein weight (g)<input
+                id="skein_grams"
+                type="number"
+                min="0.1" /></label
+            ><label
+              >Skein length (m)<input id="skein_meters" type="number" min="0.1"
+            /></label>
+          </div>
+          <label
+            >Extra allowance (%)<input
+              id="allowance"
+              type="number"
+              min="0"
+              max="100"
+              value="10" /></label
+          ><button id="estimate">Calculate estimate</button
+          ><output id="estimateResult"
+            >Estimate unavailable until measurements are entered.</output
+          >
+        </section>
+      </aside>
+      <div class="workspace">
+        <section>
+          <div class="sectionHeading">
+            <div>
+              <span class="eyebrow">DESIGN</span>
+              <h2>Stitch chart</h2>
+            </div>
+            <div class="actions">
+              <button id="undo">Undo</button><button id="redo">Redo</button>
+            </div>
+          </div>
+          <p class="muted">
+            Paint a sample chart with your selected stitch. This sample is
+            independent of the calculated full-piece counts.
+          </p>
+          <div class="toolbar">
+            <label
+              >Columns<input
+                id="cols"
+                type="number"
+                min="1"
+                max="40"
+                value="12" /></label
+            ><label
+              >Rows<input
+                id="chartRows"
+                type="number"
+                min="1"
+                max="40"
+                value="10" /></label
+            ><button id="resize">Preview size</button
+            ><button id="apply" disabled>Apply size</button
+            ><button id="cancel" disabled>Cancel</button
+            ><label
+              >Zoom<input id="zoom" type="range" min="24" max="64" value="36"
+            /></label>
+          </div>
+          <details><summary>Symbol snapping and orientation</summary>
+<p>In Automatic mode, click or drag with Position existing symbol to snap to the nearest grid line, guide, or symbol connection point. Hold Alt to bypass snapping for one placement. Top/center/bottom selects the symbol point that meets the guide. Along aligns the symbol axis with its tangent; Perpendicular aligns it with the normal.</p>
+<label><input id="snapEnabled" type="checkbox" checked>Enable snapping for new placements</label><label><input id="snapVertices" type="checkbox" checked>Snap to other symbols’ connection vertices</label><label>Guide orientation<select id="snapOrientation"><option value="free">Keep manual angle</option><option value="along">Along tangent</option><option value="perpendicular">Perpendicular to tangent</option></select></label><label><input id="symbolNoSnap" type="checkbox">Bypass snapping for next symbol only</label>
+<label>Symbol anchor<select id="symbolAnchor"><option>center</option><option>top</option><option>bottom</option></select></label>
+<label>Snap to<select id="symbolSnap"><option value="auto">Automatic nearest guide / vertex</option><option value="center">Cell center</option><option value="top">Top midpoint</option><option value="bottom">Bottom midpoint</option><option value="top-left">Top-left vertex</option><option value="top-right">Top-right vertex</option><option value="bottom-left">Bottom-left vertex</option><option value="bottom-right">Bottom-right vertex</option></select></label>
+<label>Manual angle / guide angle offset (degrees)<input id="symbolRotation" type="number" min="-180" max="180" value="0"></label>
+<details><summary>Add line or arc guides</summary><p>Rectangular coordinates use cell units from the chart’s top-left. Radial coordinates use diagram units from the 640 × 640 diagram’s top-left. Grid lines and round rings are supplied automatically. Arc angles run clockwise from the right.</p><label>Chart<select id="guideChart"><option value="rectangular">Rectangular</option><option value="radial">Radial</option></select></label><label>Guide<select id="guideKind"><option value="line">Line segment</option><option value="arc">Arc / circle</option></select></label><div class="pair"><label>X / center X<input id="guideX" type="number" step="any" value="0"></label><label>Y / center Y<input id="guideY" type="number" step="any" value="0"></label><label>End X<input id="guideX2" type="number" step="any" value="12"></label><label>End Y<input id="guideY2" type="number" step="any" value="10"></label><label>Radius<input id="guideRadius" type="number" step="any" min="0.01" value="4"></label><label>Start angle<input id="guideStart" type="number" min="0" max="360" value="0"></label><label>End angle<input id="guideEnd" type="number" min="0" max="360" value="360"></label></div><button id="addDiagramGuide">Add guide</button><button id="removeDiagramGuide">Remove last guide</button><p id="guideStatus" role="status"></p></details>
+</details>
+<p id="previewStatus" role="status"></p>
+          <div class="chartScroll">
+            <div class="chartDiagram"><div id="chart" aria-label="Crochet sample chart"></div><svg id="chartGuides" aria-label="Diagram guides"></svg></div>
+          </div>
+          <p id="chartGauge" class="muted"></p>
+          <label>Stitch family<select id="stitchFamily"><option value="">All stitches</option><option>Base</option><option>Short stitches / picots</option><option>Turning chains</option><option>Tall stitches</option><option>Clusters / shaping</option><option>Relief / complex</option><option>Custom</option></select></label><div id="palette" class="palette"></div>
+          <p id="validation" role="status"></p>
+          <details>
+            <summary>Create a custom stitch</summary>
+            <form id="customForm">
+              <div class="pair">
+                <label
+                  >Name<input id="stitchName" required maxlength="60" /></label
+                ><label
+                  >Abbreviation<input
+                    id="abbreviation"
+                    required
+                    maxlength="12" /></label
+                ><label
+                  >Symbol (text)<input
+                    id="symbol"
+                    required
+                    maxlength="4"
+                    value="◇" /></label
+                ><label
+                  >Stitches consumed<input
+                    id="consumed"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value="1"
+                    required /></label
+                ><label
+                  >Stitches produced<input
+                    id="produced"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value="1"
+                    required
+                /></label>
+              </div>
+              <label
+                >Symbol source<select id="symbolMode">
+                  <option value="text">Text symbol</option>
+                  <option value="existing">Copy selected stitch symbol</option>
+                  <option value="draw">Draw symbol</option>
+                  <option value="import">Import SVG/PNG</option>
+                </select></label
+              >
+              <div id="drawingPanel" hidden>
+                <canvas
+                  id="symbolCanvas"
+                  width="96"
+                  height="96"
+                  aria-label="Draw a stitch symbol"
+                ></canvas
+                ><button id="clearSymbol" type="button">Clear drawing</button>
+              </div>
+              <label id="symbolFileLabel" hidden
+                >Symbol image<input
+                  id="symbolFile"
+                  type="file"
+                  accept=".svg,.png,image/svg+xml,image/png"
+              /></label>
+              <p id="symbolStatus" role="status"></p>
+              <button id="addStitch">Add stitch</button>
+            </form>
+          </details>
+          <details id="pictureLibraryPanel" open>
+            <summary>Picture pattern library — shared across projects</summary>
+            <p>Browse chart pictures and recipes, or edit a separate copy. Saved patterns are read-only; every edited copy requires a unique new name.</p>
+            <label>Search shared patterns<input id="pictureLibrarySearch" type="search" placeholder="Name, stitches, description or instructions"></label>
+            <button id="refreshPictureLibrary">Refresh shared library</button><button id="capturePicturePattern">Create pattern from current chart</button>
+            <p id="pictureLibraryCount"></p><div id="pictureLibraryCards" class="pictureLibraryCards"></div><p id="pictureLibraryStatus" role="status"></p>
+          </details>
+          <details open>
+            <summary>Reusable patterns</summary>
+            <p class="muted">
+              Save this chart as a named repeating tile, then repeat it across
+              the current chart.
+            </p>
+            <label
+              >Chart tool<select id="chartTool"><option value="position">Position existing symbol</option>
+                <option value="paint" selected>Paint stitches</option>
+                <option value="select">Select repeat region</option>
+              </select></label
+            >
+            <p class="hint">
+              In selection mode, click two opposite corners (or focus cells and
+              press Enter). Save that region as a tile. Without a selection, the
+              whole chart is used.
+            </p>
+            <button id="clearSelection">Clear selection</button>
+            <p id="selectionStatus" role="status"></p>
+            <div class="actions">
+              <input
+                id="patternName"
+                placeholder="Pattern name"
+                aria-label="Pattern name"
+                maxlength="80"
+              /><button id="savePattern">Save chart as pattern</button>
+            </div>
+            <label>Pattern description<textarea id="patternDescription" maxlength="2000"></textarea></label><label>Tags (comma separated)<input id="patternTags" maxlength="600"></label><label>Folder path<input id="patternFolder" maxlength="240" placeholder="Bags/Handles"></label><label>Search patterns<input id="patternSearch" type="search"></label><label>Filter folder<input id="patternFolderFilter" placeholder="Bags"></label>
+            <div id="patterns"></div>
+            <details><summary>Reuse patterns from another project</summary><p>Use a saved project as a pattern library. Imports are independent snapshots; source edits never silently rewrite other projects. Preview and Apply are required to import or update.</p><button id="refreshPatternSources">Refresh source projects</button><select id="patternSource" aria-label="Source project"></select><button id="loadPatternSource">Load saved source</button><select id="sourcePattern" aria-label="Source pattern"></select><label><input id="updateLibraryDefinitions" type="checkbox">Update previously imported stitch definitions</label><button id="previewLibraryPattern">Preview pattern import/update</button><button id="applyLibraryPattern">Apply pattern snapshot</button><button id="cancelLibraryPattern">Cancel library preview</button><p id="libraryPatternStatus" role="status"></p></details>
+          </details>
+        </section>
+        <section><h2>Project photos</h2><p>Store up to eight reference or progress photos. Imports become compact JPEGs up to 640 pixels; keep originals separately. Photos travel with project files, revisions and backups.</p><label>Add photo<input id="addPhoto" type="file" accept="image/jpeg,image/png,image/webp"></label><p id="photoStatus" role="status"></p><div id="projectPhotos"></div></section>
+        <section><h2>Open-top bag template</h2><p>Add a rectangular base, front/back panels and end panels with matching seam relationships. Existing designs remain in the project. Handles, closures, seam take-up and crochet construction need your design choices.</p><label>Width (cm)<input id="bagWidth" type="number" min="0.1" max="200" value="30" step="0.1"></label><label>Height (cm)<input id="bagHeight" type="number" min="0.1" max="200" value="25" step="0.1"></label><label>Depth (cm)<input id="bagDepth" type="number" min="0.1" max="200" value="10" step="0.1"></label><button id="previewBag">Preview bag pieces</button><button id="applyBag">Apply bag template</button><button id="cancelBag">Cancel template preview</button><p id="bagStatus" role="status"></p><canvas id="bagCanvas" width="1100" height="650" hidden style="width:100%;height:auto"></canvas></section>
+        <section><h2>Project craft</h2><label>Craft<select id="projectCraft"><option value="crochet">Crochet</option><option value="knitting">Knitting</option></select></label><label>Selected piece knitting mode<select id="knittingMode"><option value="flat">Flat rows</option><option value="round">Circular rounds</option></select></label><button id="applyCraft">Apply craft / knitting mode</button><p>Knitting adds knit, purl, yarn-over, increases and decreases to the stitch library. Symbols mean the stitch to work on that row, not how it appears from the right side. Circular charts use the rectangular grid, one round per row, read right to left. Switching craft preserves existing charts; replace any incompatible stitches yourself and measure a matching swatch. Cast-on, joining and bind-off instructions belong in your finishing notes.</p></section>
+        <section><h2>Crochet terminology and starter stitches</h2><label>Project stitch terminology<select id="terminology"><option value="US">US</option><option value="UK">UK</option><option value="DE">German</option></select></label><label><input id="addStandardStitches" type="checkbox" checked>Add missing standard stitches and explicit shaping combinations</label><button id="applyTerminology">Apply terminology / stitch additions</button><p>Standard stitch names and abbreviations change; prose stays in US English. Custom labels and edited instructions remain yours. Review instructions after applying. Includes base stitches, picots, turning chains, tall stitches, clusters, popcorns, front/back post relief stitches and loop variants. Turning-chain presets state whether they count; do not also add the same chains through radial construction rules. Picot is a decorative zero-count attachment. Cluster, shell and increase/decrease definitions specify their exact stitch counts; they are examples, not universal recipes.</p></section>
+        <section>
+          <h2>Assembly preview</h2>
+          <p>Arrange piece copies with controlled folds and seam guides. Colors follow yarn bands. This concept view does not sew edges, simulate drape, or change yarn estimates. Units are centimeters; rotations are degrees.</p>
+          <label>Piece copy<select id="assemblyCopy"></select></label>
+<label>Horizontal position<input id="assemblyx" type="range" min="-1000" max="1000" value="0" step="1"><output id="assemblyxValue"></output></label>
+<label>Vertical position<input id="assemblyy" type="range" min="-1000" max="1000" value="0" step="1"><output id="assemblyyValue"></output></label>
+<label>Depth<input id="assemblyz" type="range" min="-1000" max="1000" value="0" step="1"><output id="assemblyzValue"></output></label>
+<label>Tilt about X<input id="assemblyrx" type="range" min="-180" max="180" value="0" step="1"><output id="assemblyrxValue"></output></label>
+<label>Turn about Y<input id="assemblyry" type="range" min="-180" max="180" value="0" step="1"><output id="assemblyryValue"></output></label>
+<label>Rotate about Z<input id="assemblyrz" type="range" min="-180" max="180" value="0" step="1"><output id="assemblyrzValue"></output></label>
+          <button id="resetAssemblyCopy">Reset selected copy placement</button>
+          <fieldset><legend>Controlled fold for selected copy</legend>
+            <label>Selected fold<select id="foldSelect"></select></label><button id="addFold">Add parallel fold</button><label><input id="foldEnabled" type="checkbox">Enable selected fold (uncheck to remove)</label>
+            <label>Fold line<select id="foldAxis"><option value="y">Across height (constant Y)</option><option value="x">Across width (constant X)</option></select></label>
+            <label>Side to fold<select id="foldSide"><option value="positive">Positive side (right/bottom)</option><option value="negative">Negative side (left/top)</option></select></label>
+            <label>Position within flat bounding dimension<input id="foldPosition" type="range" min="1" max="99" value="50"><output id="foldPositionValue"></output></label>
+            <label>Fold angle<input id="foldAngle" type="range" min="-180" max="180" value="0"><output id="foldAngleValue"></output></label>
+            <p>Up to eight parallel hinges per copy, applied in list order. Crease positions refer to the original flat piece. At 0° the piece is flat; at ±180° the chosen side folds back. Angle sign controls depth direction. Folds do not change fabric dimensions or yarn usage. Reset placement also removes the fold; Undo recovers it.</p>
+          </fieldset>
+          <label>View rotation<input id="assemblyYaw" type="range" min="-180" max="180" value="30"></label>
+          <label><input id="assemblyLabels" type="checkbox" checked>Show piece labels</label>
+          <canvas id="assemblyCanvas" width="1100" height="650" aria-label="Assembled piece concept preview"></canvas>
+          <p id="assemblyStatus" role="status"></p>
+          <button id="downloadAssembly">Download assembly PNG</button>
+          <fieldset><legend>Seam relationships</legend>
+            <p>Edges are named on the original flat piece, before rotation or folding. Rectangle edges run clockwise from top-left; triangle edges run left-base → tip → right-base → left-base. Circle/oval edges are clockwise quarter arcs, with the top arc starting at the upper-left diagonal. Solid colored guides mark matched edges; dashed lines connect matching start, midpoint and end. These guides do not move or sew pieces.</p>
+            <label>Seam<select id="seamSelect"></select></label>
+            <label>Name<input id="seamName" maxlength="100"></label>
+            <label>First copy<select id="seamA"></select></label><label>First edge<select id="seamAEdge"></select></label>
+            <label>Second copy<select id="seamB"></select></label><label>Second edge<select id="seamBEdge"></select></label>
+            <label><input id="seamReverse" type="checkbox" checked>Reverse the second edge direction</label>
+            <label>Joining method and seam notes<textarea id="seamNote" maxlength="2000"></textarea></label>
+            <button id="saveSeam">Save / mark seam reviewed</button><button id="deleteSeam">Remove selected seam</button>
+          </fieldset>
+          <button id="previewAlignment">Preview selected seam alignment</button><button id="applyAlignment">Apply alignment</button><button id="cancelAlignment">Cancel alignment preview</button>
+          <p id="alignmentStatus" role="status"></p><p>Alignment rotates and translates the second copy to match edge direction and endpoint midpoint. It never stretches fabric; curved, folded or unequal edges may retain a mismatch. Review other seams after applying.</p>
+          <label>Project assembly notes<textarea id="assemblyNotes" maxlength="4000"></textarea></label>
+          <button id="saveAssemblyNotes">Save assembly notes</button><button id="discardAssemblyDrafts">Discard unsaved assembly edits</button>
+          <p id="seamStatus" role="status"></p><p id="assemblyPlanReport" role="status" style="white-space: pre-wrap"></p>
+        </section>
+        <section id="amigurumiSection">
+          <h2>Amigurumi — rounds, stuffed forms and stitch geometry</h2>
+          <p>Create a part or import numbered rounds. Shapes follow stitch counts and measured gauge. Surface and yarn-loop views are procedural approximations; placement, stuffing, joins and realistic fabric behavior need craft review.</p>
+          <button id="amiStarter">Preview starter ball</button>
+          <details open><summary>Import pattern or reference</summary><fieldset id="amiImportFields">
+            <label>Import terminology<select id="amiImportTerms"><option>US</option><option>UK</option><option>DE</option></select></label>
+            <label>Import action<select id="amiImportAction"><option value="add">Add as new project parts</option><option value="replace">Replace selected amigurumi design</option></select></label>
+            <label>PDF/photo action<select id="amiFileAction"><option value="convert">Convert rounds and attach reference</option><option value="reference">Attach reference only</option></select></label>
+            <label>OCR language<select id="amiOCRLanguage"><option value="eng">English</option><option value="deu">German</option><option value="eng+deu">English + German</option></select></label>
+            <label>Import JSON / text / PDF / photo<input id="amiImportFile" type="file" accept=".json,.txt,.pdf,.png,.jpg,.jpeg,.webp"></label>
+            <p>PDFs: up to 1 MB and 10 pages. Photos: up to 10 MB; references are compacted. Everything stays offline. Imported text is editable before Apply.</p>
+            <label>Numbered round source<textarea id="amiSourceText" rows="9" maxlength="200000" placeholder="Part: Head (make 1)&#10;R1: 6 sc in MR (6)&#10;R2: 6 inc (12)&#10;R3: (sc, inc) x6 (18)&#10;R4-6: 18 sc (18)"></textarea></label>
+            <button id="amiPreviewImport">Preview import from text</button>
+          </fieldset></details>
+          <p id="amiPreviewReport" class="amiMultiline"></p><label><input id="amiReviewed" type="checkbox">I reviewed the imported/edited recipe, counts and annotations</label><button id="amiApply" disabled>Apply amigurumi preview</button><button id="amiCancel">Cancel amigurumi edits</button>
+          <div class="pair"><label>View scope<select id="amiViewScope"><option value="part">Selected part (one copy)</option><option value="all">Assembled amigurumi copies</option></select></label><label>Geometry<select id="amiViewDetail"><option value="surface">Stuffed surface</option><option value="stitches">Stitch-level yarn loops</option></select></label></div>
+          <div class="pair"><label>Yaw<input id="amiYaw" type="range" min="-180" max="180" value="30"></label><label>Pitch<input id="amiPitch" type="range" min="-85" max="85" value="15"></label><label>Zoom<input id="amiZoom" type="range" min="0.3" max="3" step="0.1" value="1"></label></div>
+          <canvas id="amiCanvas" width="1000" height="650" aria-label="Rotatable amigurumi 3D preview"></canvas><p>Drag the picture to rotate it. Missing gauge uses uncalibrated stitch units. OBJ/STL filenames identify the exported units; STL itself has no unit metadata.</p>
+          <div id="amiPartEditor" hidden>
+            <h3>Edit selected part</h3>
+            <div class="pair"><label>Rounds<select id="amiMode"><option value="spiral">Continuous spiral</option><option value="joined">Joined rounds</option></select></label><label>Foundation<select id="amiFoundation"><option value="magic">Magic ring</option><option value="chain">Chain foundation — specify in notes</option><option value="unspecified">Unspecified</option></select></label></div>
+            <label><input id="amiCloseStart" type="checkbox">Close starting end in preview</label><label><input id="amiCloseEnd" type="checkbox">Close finishing end in preview</label>
+            <div class="pair"><label>Stitches per 10 cm<input id="amiStitchGauge" type="number" min="0" max="1000" step="any" value="0"></label><label>Rounds per 10 cm<input id="amiRoundGauge" type="number" min="0" max="1000" step="any" value="0"></label></div>
+            <label>Part / stuffing / assembly notes<textarea id="amiPartNotes" maxlength="16000"></textarea></label>
+            <label>Round<select id="amiRoundSelect"></select></label><label>US recipe (sc, inc, dec, hdc, dc, tr, sl, ch; explicit repeats)<input id="amiRecipe" maxlength="8000"></label><label>Round notes<textarea id="amiRoundNotes" maxlength="4000"></textarea></label><label>Round yarn color<input id="amiRoundColor" type="color" value="#cb765d"></label>
+            <button id="amiPreviewRound">Preview round / settings changes</button><button id="amiAddRound">Preview duplicate round after this one</button><button id="amiRemoveRound">Preview removing this round</button>
+            <label>Round chart zoom<input id="amiChartZoom" type="range" min="1" max="6" step="0.1" value="1"></label><div id="amiRoundViewport"><canvas id="amiRoundCanvas" width="1000" height="1000" aria-label="Selected amigurumi round symbol chart"></canvas></div>
+            <p id="amiWarnings" class="amiMultiline"></p><div class="radialViewport"><table><thead><tr><th>Round</th><th>Recipe</th><th>Consumes</th><th>Produces</th><th>Notes</th></tr></thead><tbody id="amiRoundsTable"></tbody></table></div>
+            <details><summary>Copy 1 assembly placement</summary><p>Use the main assembly controls for other copies and joining notes.</p><div class="pair">
+            <label>X<input id="amiPose-x" type="number" value="0" min="-1000" max="1000" step="any"></label><label>Y<input id="amiPose-y" type="number" value="0" min="-1000" max="1000" step="any"></label><label>Z<input id="amiPose-z" type="number" value="0" min="-1000" max="1000" step="any"></label><label>Rotate X<input id="amiPose-rx" type="number" value="0" min="-180" max="180"></label><label>Rotate Y<input id="amiPose-ry" type="number" value="0" min="-180" max="180"></label><label>Rotate Z<input id="amiPose-rz" type="number" value="0" min="-180" max="180"></label></div><button id="amiApplyPose">Apply copy 1 placement</button></details>
+          </div>
+          <h3>PDF / photo references</h3><div id="amiReferences"></div>
+          <h3>Export current view scope</h3><button id="amiExportJSON">Download editable amigurumi JSON</button><button id="amiExportText">Download round instructions TXT</button><button id="amiExportPDF">Download amigurumi PDF</button><button id="amiExportPNG">Download 3D view PNG</button><button id="amiExportChart">Download selected round PNG</button><button id="amiExportOBJ">Download OBJ</button><button id="amiExportSTL">Download STL</button>
+          <p>OBJ/STL use the selected surface or stitch-level detail. Detailed mesh exports support up to 4000 loops per part and 250000 vertices per export. Full project JSON, named revisions and collection backups also preserve amigurumi designs and references.</p>
+          <p id="amiStatus" role="status" class="amiMultiline"></p>
+        </section>
+        <section id="radialSection">
+          <h2>Radial sample chart</h2>
+          <p>
+            Joined rounds use separate rings; a continuous spiral keeps
+            advancing around the center. Symbol slots are not stitch totals.
+            Starting rings, joining/slip stitches, turning chains, and increases
+            must be specified manually. This sample does not determine
+            full-piece dimensions or yarn estimates.
+          </p>
+          <button id="createRoundChart">Create radial sample</button
+          ><button id="discardRoundDraft">Discard unsaved round notes</button>
+          <div id="roundEditor" hidden>
+            <div class="pair">
+              <label
+                >Construction layout<select id="roundMode">
+                  <option value="joined">Joined rounds</option>
+                  <option value="spiral">Continuous spiral</option>
+                </select></label
+              ><label
+                >Reading direction<select id="roundDirection">
+                  <option value="clockwise">Clockwise</option>
+                  <option value="counterclockwise">Counterclockwise</option>
+                </select></label
+              >
+            </div>
+            <fieldset><legend>Starting ring (whole sample)</legend>
+            <label>Foundation<select id="roundFoundation"><option value="unspecified">Unspecified</option><option value="magic">Magic ring</option><option value="chain">Joined chain ring</option></select></label>
+            <label>Foundation chains<select id="foundationChains"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option></select></label></fieldset>
+            <fieldset><legend>Selected round construction</legend>
+            <label>Starting chains<select id="roundChains"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>
+            <label><input type="checkbox" id="roundChainCounts">Starting chains count as one additional stitch</label>
+            <label><input type="checkbox" id="roundTurn">Turn before this round</label>
+            <label>End of round<select id="roundJoin"><option value="unspecified">Unspecified</option><option value="none">No join</option><option value="first-stitch">Slip stitch into first worked stitch</option><option value="first-chain">Slip stitch into top of starting chain</option></select></label>
+            <p>These operations are additional to the painted symbols. A counted starting chain adds one produced stitch. Joins add none. Choose rules explicitly; layout changes never rewrite them.</p>
+            </fieldset>
+            <label>Selected round<select id="roundSelect"></select></label
+            ><label>Stitch to paint<select id="roundStitch"></select></label
+            ><label
+              >Symbol slots in selected round<input
+                id="roundSlots"
+                type="number"
+                min="1"
+                max="120"
+                value="6" /></label
+            ><button id="resizeRound">Apply slot count</button
+            ><button id="addRound">Add round</button
+            ><button id="removeRound">Remove selected round</button>
+            <div class="radialViewport">
+              <svg
+                id="roundDiagram"
+                viewBox="0 0 640 640"
+                role="group"
+                aria-label="Editable radial crochet sample"
+              ></svg>
+            </div>
+            <button id="openShapingSettings">Shaping suggestions and settings</button><dialog id="shapingDialog"><h2>Shaping suggestions and settings</h2><button id="closeShapingSettings">Close settings</button><label><input id="shapingEnabled" type="checkbox" checked>Enable shaping suggestions for this project</label><div id="shapingControls"><p>For round 2 onward, suggest evenly distributed 1→2 increases or 2→1 decreases using the previous round’s count. This is a count-based sample plan, not a guarantee of flatness or finished dimensions. Manual chart editing remains available.</p><label>Target produced stitches<input id="shapingTarget" type="number" min="1" max="240" value="12"></label><label>Regular stitch<select id="shapingNormal"></select></label><label>Increase<select id="shapingIncrease"></select></label><label>Decrease<select id="shapingDecrease"></select></label><button id="previewShaping">Preview shaping</button><button id="applyShaping">Apply shaping</button><button id="cancelShaping">Cancel shaping preview</button><p id="shapingStatus" role="status"></p></div></dialog>
+            <p id="roundWarnings" role="status"></p>
+            <details>
+              <summary>Stitch placement and shaping counts</summary>
+              <label>Placement for selected round<select id="roundPlacement"><option value="unspecified">Unspecified</option><option value="sequential">Sequential in working order</option></select></label>
+              <p>Sequential placement assigns each symbol its declared number of consecutive base stitches, starting at 1. Round 1 works into the starting ring. Numbering follows your working order after any turn, not positions in the diagram. Choose the physical starting stitch, loops and attachment points yourself. Shared bases, skipped stitches and chain spaces require custom notes.</p>
+              <p id="roundShapingSummary" role="status"></p>
+              <p>Positive slot changes identify increases; negative changes identify decreases according to your stitch definitions. Counted starting chains add one to the round total separately. These counts do not predict whether fabric lies flat or reaches the desired dimensions.</p>
+              <div class="radialViewport"><table><thead><tr><th>Slot</th><th>Stitch</th><th>Base placement</th><th>Consumes</th><th>Produces</th><th>Change</th></tr></thead><tbody id="roundPlacementRows"></tbody></table></div>
+            </details>
+            <details>
+              <summary>Position a symbol manually</summary>
+              <p>
+                Offsets, snapping and orientation change the diagram only. Stitch order and counts remain
+                unchanged.
+              </p>
+              <label
+                >Slot number<input
+                  id="roundPositionSlot"
+                  type="number"
+                  min="1"
+                  value="1" /></label
+              ><label
+                >Angular offset (degrees)<input
+                  id="roundAngle"
+                  type="number"
+                  min="-180"
+                  max="180"
+                  value="0" /></label
+              ><label
+                >Radial offset (diagram units)<input
+                  id="roundRadius"
+                  type="number"
+                  min="-20"
+                  max="20"
+                  value="0" /></label
+              ><label><input id="roundNoSnap" type="checkbox">Bypass snapping for next symbol only</label><p>Drag a symbol to use automatic snapping. Global snapping and orientation settings are above the rectangular chart.</p><label>Symbol anchor<select id="roundAnchor"><option>center</option><option>top</option><option>bottom</option></select></label><label>Snap target<select id="roundSnap"><option value="auto">Automatic nearest guide / vertex</option><option value="center">Slot center</option><option value="top">Slot top</option><option value="bottom">Slot bottom</option><option value="top-left">Top-left vertex</option><option value="top-right">Top-right vertex</option><option value="bottom-left">Bottom-left vertex</option><option value="bottom-right">Bottom-right vertex</option></select></label><label>Orientation (degrees)<input id="roundRotation" type="number" min="-180" max="180" value="0"></label><button id="positionRoundSymbol">Apply symbol position</button>
+            </details>
+            <p id="roundReview"></p>
+            <label
+              >Saved instructions for selected round<textarea
+                id="roundText"
+                maxlength="4000"
+              ></textarea></label
+            ><button id="saveRoundText">Save round notes</button
+            ><button id="reviewRoundText">Keep my text — round reviewed</button
+            ><button id="generateRoundText">
+              Use generated round instructions
+            </button>
+            <details>
+              <summary>Generated text for review</summary>
+              <p id="roundGenerated"></p>
+            </details>
+            <button id="downloadRoundPng">Download radial chart PNG</button>
+          </div>
+          <p id="roundStatus" role="status"></p>
+        </section>
+        <section>
+          <h2>Design revisions</h2>
+          <p class="muted">
+            Keep meaningful milestones separate from autosave. Give each
+            revision a distinctive, searchable name.
+          </p>
+          <label
+            >Revision name<input
+              id="revisionName"
+              maxlength="100"
+              placeholder="Wider scarf with shell border" /></label
+          ><button id="saveRevision">Save named revision</button>
+          <p id="revisionStatus" role="status"></p>
+          <label
+            >Search revision names<input
+              id="revisionSearch"
+              type="search"
+              placeholder="Search by description"
+          /></label>
+          <p id="revisionCount"></p>
+          <div id="revisionList"></div>
+          <p class="hint">
+            History travels with downloaded project files. Prototype limits: 100
+            revisions and 2 MB per project. Restoring saves both the previous
+            design and the restored design as new revisions.
+          </p>
+        </section>
+        <section>
+          <h2>Export your design</h2>
+          <div class="exportChoices">
+            <label
+              ><input type="checkbox" id="export-chart" /> Chart and
+              legend</label
+            ><label
+              ><input type="checkbox" id="export-picture" /> Fabric
+              picture</label
+            ><label
+              ><input type="checkbox" id="export-yarn" /> Yarn estimate</label
+            ><label
+              ><input type="checkbox" id="export-instructions" /> Saved
+              instructions</label
+            ><label
+              ><input type="checkbox" id="export-notes" /> Finishing
+              notes</label
+            >
+          </div>
+          <label><input id="exportAllPieces" type="checkbox">Include all piece designs (quantity shown for each)</label><button id="previewExport">Preview export</button>
+          <p id="exportStatus" role="status"></p>
+          <p class="hint">
+            Exports cover the active piece, including its quantity. Print or
+            save all pages as PDF through your browser. Download individual
+            pages as PNG. Selections are saved with this project.
+          </p>
+        </section>
+        <section>
+          <span class="eyebrow">PATTERN NOTES</span>
+          <h2>Sample-chart instructions</h2>
+          <p class="muted">
+            Optional row instructions for the sample chart, not the full-size
+            piece. Review stitch-count warnings above. Foundation chains,
+            turning chains, placement details, and round construction are not
+            generated. Custom stitch definitions must be explained separately.
+          </p>
+          <div id="instructions"></div>
+        </section>
+        <section>
+          <div class="sectionHeading">
+            <div>
+              <span class="eyebrow">SHAPE STUDY</span>
+              <h2>Fabric preview</h2>
+            </div>
+            <label
+              >View<select id="view">
+                <option value="3d">3D approximation</option>
+                <option value="2d">2D shape</option>
+              </select></label
+            >
+          </div>
+          <canvas
+            id="fabric"
+            width="900"
+            height="420"
+            aria-label="Approximate fabric shape preview"
+          ></canvas
+          ><label
+            >Rotate preview<input
+              id="rotation"
+              type="range"
+              min="-70"
+              max="70"
+              value="25"
+          /></label>
+          <p class="hint">
+            Overall proportions and colors only; approximate texture, no
+            physical drape simulation. Use the slider to rotate.
+          </p>
+        </section>
+      </div>
+    </main>
+    <footer>
+      <span id="status" role="status">Loading local project…</span
+      ><span>Local storage · Rust backend · No external assets</span>
+    </footer>
+    <dialog id="exportDialog">
+      <h2>Export preview</h2>
+      <button id="closeExport">Close preview</button>
+      <p id="exportWarnings" role="status"></p>
+      <label id="exportAcknowledgement" hidden
+        ><input type="checkbox" id="exportAcknowledge" /> I have reviewed these
+        warnings.</label
+      >
+      <div class="actions">
+        <button id="exportPng" disabled>Download this page as PNG</button
+        ><button id="exportPdf" disabled>Print / Save all pages as PDF</button>
+      </div>
+      <div id="exportPages" hidden>
+        <div class="actions">
+          <button id="exportPrevious">Previous page</button
+          ><span id="exportPageNumber"></span
+          ><button id="exportNext">Next page</button>
+        </div>
+        <img id="exportPage" alt="Export preview" />
+      </div>
+    </dialog>
+    <dialog id="duplicateDialog">
+      <h2>Project already in your library</h2>
+      <p id="duplicateName"></p>
+      <p>
+        Open the existing project or import the file as a separate copy. Neither
+        choice overwrites the existing design.
+      </p>
+      <button id="openExisting">Open existing</button
+      ><button id="importCopy">Import as a separate copy</button
+      ><button id="cancelImport">Cancel</button>
+    </dialog>
+    <div id="printExport"></div>
+    <script type="module" src="/app.js"></script>
+  <dialog id="workingDialog" style="width:90vw;max-width:1200px"><h2 id="workingTitle"></h2><p>Sample-chart navigation only. Previous/next moves the highlight; it does not change your saved completed-row count. Confirm full-piece repeats and shaping from your instructions.</p><label>Chart<select id="workingLayout"><option value="amigurumi">Amigurumi full rounds</option><option value="grid" selected>Rectangular rows / knitting rounds</option><option value="radial">Crochet radial rounds</option></select></label><button id="workingPrev">Previous</button><button id="workingNext">Next</button><button id="closeWorking">Close working view</button><p id="workingInstruction"></p><div id="workingChart" style="max-height:60vh;overflow:auto;white-space:nowrap"></div></dialog>
+<dialog id="picturePatternDialog" aria-labelledby="pictureDraftTitle">
+<fieldset id="pictureDraftFields"><h2 id="pictureDraftTitle">Edit a new pattern copy</h2><p id="pictureSourceName"></p>
+<label>Unique new name<input id="pictureNewName" maxlength="100" required></label>
+<label>Description<textarea id="pictureDescription" maxlength="2000"></textarea></label>
+<label>How to crochet<textarea id="pictureInstructions" maxlength="16000" rows="8"></textarea></label>
+<p>Paint the draft chart by clicking symbols or focusing them and pressing Enter/Space. Editing here never changes the source or the current project chart. Review instructions after chart changes.</p>
+<label>Paint with stitch<select id="pictureDraftStitch"></select></label><div id="pictureDraftChart"></div><p id="pictureDraftLegend"></p>
+<div class="pair"><label>Columns<input id="pictureDraftCols" type="number" min="1" max="40"></label><label>Rows<input id="pictureDraftRows" type="number" min="1" max="40"></label></div><button id="resizePictureDraft">Resize draft chart</button>
+<label>Add a stitch from this project<select id="pictureProjectStitch"></select></label><button id="addPictureProjectStitch">Add project stitch to draft</button>
+<label>Optional finished-fabric photo<input id="picturePhotoInput" type="file" accept="image/jpeg,image/png,image/webp"></label><div id="pictureDraftPhoto"></div><button id="removePicturePhoto">Remove draft photo</button>
+<p id="pictureDraftStatus" role="status"></p><button id="savePictureDraft">Save as new pattern</button><button id="refreshPictureDraftLibrary">Reload library list, keeping draft</button><button id="cancelPictureDraft">Cancel draft</button></fieldset>
+</dialog>
+</body>
+</html>

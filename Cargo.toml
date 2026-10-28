@@ -1,0 +1,16 @@
+[package]
+name = "stitchinator"
+version = "0.1.0-alpha.20"
+edition = "2024"
+publish = false
+repository = "https://github.com/richardnoragon/stitchinator"
+description = "Offline crochet, knitting and amigurumi design"
+
+[dependencies]
+axum = "0.8"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "fs", "time"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
+sha2 = "0.10"
